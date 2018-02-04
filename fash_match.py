@@ -11,6 +11,7 @@ import os
 import wx
 from wx.lib.pubsub import pub as Publisher
 import csv
+import sys
 
 
 global lovelist
@@ -24,10 +25,11 @@ class ViewerPanel(wx.Panel):
     #----------------------------------------------------------------------
     def __init__(self, parent):
         """Constructor"""
+        global dirname
         wx.Panel.__init__(self, parent)
         
         width, height = wx.DisplaySize()
-        self.picPaths = glob.glob('fashion/' + "*.jpg")
+        self.picPaths = glob.glob(dirname + '/' + "*.jpg")
 
         self.currentPicture = 0
         self.totalPictures = 0
@@ -142,7 +144,8 @@ class ViewerPanel(wx.Panel):
         """
         Updates the picPaths list to contain the current folder's images
         """
-        self.picPaths = glob.glob('fashion/' + "*.jpg")
+        global dirname
+        self.picPaths = glob.glob(dirname + '/' + "*.jpg")
         self.totalPictures = len(self.picPaths)
         self.loadImage(self.picPaths[0])
         
@@ -182,9 +185,10 @@ class ViewerFrame(wx.Frame):
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
+        global dirname
         wx.Frame.__init__(self, None, title="Fash Match")
         panel = ViewerPanel(self)
-        self.folderPath = "fashion/"
+        self.folderPath = dirname + "/"
         Publisher.subscribe(self.resizeFrame, ("resize"))
         
         self.initToolbar()
@@ -244,6 +248,11 @@ if __name__ == "__main__":
     global love
     global lovelist
     global hatelist
+    global dirname
+    if len(sys.argv) > 1:
+        dirname = sys.argv[1]
+    else:
+        dirname = 'fashion'
     love = 0
     hate = 0
     lovelist = []
